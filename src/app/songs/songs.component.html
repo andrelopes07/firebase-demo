@@ -1,0 +1,12 @@
+<h2>Repertório</h2>
+
+<div>
+  <form (ngSubmit)="addSong(song)" #songForm="ngForm">
+    Nome da Música: <input type="text" id="title" required [(ngModel)]="song.title" name="title">
+    <button type="submit" [disabled]="!songForm.form.valid" class="btn btn-primary">Adicionar</button>
+  </form>
+</div>  
+
+<div *ngFor="let song of songs | async" class="card">
+  <app-song-detail [song]='song' class="card-body"></app-song-detail>
+</div>

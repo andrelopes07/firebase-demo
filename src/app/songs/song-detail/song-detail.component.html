@@ -1,0 +1,12 @@
+<div>
+    <h3>{{ song.title }}</h3>
+    <button (click)='removeSong(song)' class="btn btn-danger">Delete</button>
+</div>
+
+<div>
+    <ul *ngFor="let file of uploads | async">
+        <li><a href="{{ file.url }}" download="">{{ file.name }}</a></li>
+    </ul>
+</div>
+
+<app-file-upload [song]='song'></app-file-upload>

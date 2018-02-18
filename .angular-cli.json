@@ -19,9 +19,14 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/alertifyjs/build/css/alertify.min.css",
+        "../node_modules/alertifyjs/build/css/themes/bootstrap.min.css",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/alertifyjs/build/alertify.min.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
@@ -55,6 +60,28 @@
   },
   "defaults": {
     "styleExt": "css",
-    "component": {}
+    "class": {
+      "spec": false
+    },
+    "component": {
+      "inlineStyle": false,
+      "inlineTemplate": false,
+      "spec": false
+    },
+    "directive": {
+      "spec": false
+    },
+    "guard": {
+      "spec": false
+    },
+    "module": {
+      "spec": false
+    },
+    "pipe": {
+      "spec": false
+    },
+    "service": {
+      "spec": false
+    }
   }
 }
