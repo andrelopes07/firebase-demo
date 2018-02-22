@@ -8,5 +8,5 @@
 </div>  
 
 <div *ngFor="let song of songs | async" class="card">
-  <app-song-detail [song]='song' class="card-body"></app-song-detail>
+  <app-song-detail [song]='song' [user]="user" class="card-body"></app-song-detail>
 </div>

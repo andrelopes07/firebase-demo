@@ -1,12 +1,19 @@
 <div>
     <h3>{{ song.title }}</h3>
-    <button (click)='removeSong(song)' class="btn btn-danger">Delete</button>
 </div>
 
 <div>
-    <ul *ngFor="let file of uploads | async">
-        <li><a href="{{ file.url }}" download="">{{ file.name }}</a></li>
+    <ul *ngFor="let upload of uploads | async">
+        <li><app-file-detail [user]="user" [song]='song' [upload]='upload'></app-file-detail></li>
     </ul>
 </div>
 
-<app-file-upload [song]='song'></app-file-upload>
+<h4>Carregar Ficheiro</h4>
+
+<div *ngIf="currentUpload">
+    Progresso: {{ currentUpload?.name }} <progress class="progress is-success" max=100 value="{{ currentUpload?.progress }}"></progress>
+</div>
+
+<input type="file" class="button" (change)="detectFiles($event)">
+
+<button [disabled]="!selectedFiles" (click)="uploadSingle()">Upload</button>

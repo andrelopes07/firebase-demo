@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Song } from '../../_Models/Song';
-import { SongsService } from '../../_services/songs.service';
-import { UploadService } from '../../_services/upload.service';
+import { SongsService } from '../../_Services/songs.service';
+import { UploadService } from '../../_Services/upload.service';
 import { Observable } from 'rxjs/Observable';
 import { Upload } from '../../_Models/Upload';
+import { AlertifyService } from '../../_Services/alertify.service';
+import { AuthService } from '../../_Services/auth.service';
+import { User } from '../../_Models/User';
 
 @Component({
   selector: 'app-song-detail',
@@ -12,11 +15,16 @@ import { Upload } from '../../_Models/Upload';
 })
 export class SongDetailComponent implements OnInit {
   @Input() song: Song;
+  @Input() user: User;
   uploads: Observable<Upload[]>;
+  selectedFiles: FileList | null;
+  currentUpload: Upload;
 
   constructor(
+    private auth: AuthService,
     private songsService: SongsService,
-    private uploadService: UploadService
+    private uploadService: UploadService,
+    private alertify: AlertifyService
   ) { }
 
   ngOnInit() {
@@ -24,7 +32,30 @@ export class SongDetailComponent implements OnInit {
   }
 
   removeSong() {
-    this.songsService.removeSong(this.song.$key);
+    if(this.auth.canDelete(this.user)) {
+      this.songsService.removeSong(this.song);
+      this.alertify.success("Música removida com sucesso!");
+    } else {
+      this.alertify.error("Acesso Negado!");
+    }
+  }
+
+  detectFiles($event: Event) {
+    this.selectedFiles = ($event.target as HTMLInputElement).files;
+  }
+
+  uploadSingle() {
+    if(this.auth.canEdit(this.user)) {
+      const file = this.selectedFiles;
+      if (file && file.length === 1) {
+        this.currentUpload = new Upload(file.item(0));
+        this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.$key);
+      } else {
+        this.alertify.error('Nenhum ficheiro selecionado!');
+      }
+    } else {
+      this.alertify.error("Acesso Negado!");
+    }
   }
 
 }

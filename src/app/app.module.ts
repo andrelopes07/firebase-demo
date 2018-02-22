@@ -6,13 +6,15 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { FormsModule }   from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { AlertifyService } from './_services/alertify.service';
-import { UploadService } from './_services/upload.service';
+import { AlertifyService } from './_Services/alertify.service';
+import { UploadService } from './_Services/upload.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { SongsComponent } from './songs/songs.component';
 import { SongDetailComponent } from './songs/song-detail/song-detail.component';
-import { SongsService } from './_services/songs.service';
-import { FileUploadComponent } from './songs/song-detail/file-upload/file-upload.component';
+import { SongsService } from './_Services/songs.service';
+import { FileDetailComponent } from './songs/song-detail/file-detail/file-detail.component';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AuthService } from './_Services/auth.service';
 
 
 @NgModule({
@@ -20,7 +22,7 @@ import { FileUploadComponent } from './songs/song-detail/file-upload/file-upload
     AppComponent,
     SongsComponent,
     SongDetailComponent,
-    FileUploadComponent
+    FileDetailComponent
 ],
   imports: [
     BrowserModule,
@@ -33,10 +35,12 @@ import { FileUploadComponent } from './songs/song-detail/file-upload/file-upload
     }),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
+    AngularFirestoreModule,
     AngularFireStorageModule,
     FormsModule
   ],
   providers: [
+    AuthService,
     SongsService,
     UploadService,
     AlertifyService

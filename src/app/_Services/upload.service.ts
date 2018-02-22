@@ -4,6 +4,7 @@ import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { AlertifyService } from './alertify.service';
+import { Song } from '../_Models/Song';
 
 @Injectable()
 export class UploadService {
@@ -55,18 +56,18 @@ export class UploadService {
         );
     }
 
-    deleteUpload(upload: Upload) {
-        this.deleteFileData(upload.$key)
+    deleteUpload(song: Song, upload: Upload) {
+        this.deleteFileData(song.$key, upload.$key)
             .then( () => {
-                this.deleteFileStorage(upload.name);
+                this.deleteFileStorage(song.title, upload.name);
                 this.alertify.success('Ficheiro removido com sucesso!');
             })
             .catch((error) => this.alertify.error(error));
     }
 
-    private deleteFileStorage(name: string) {
+    private deleteFileStorage(songName: string, fileName: string) {
         const storageRef = firebase.storage().ref();
-        storageRef.child(`${this.basePath}/${name}`).delete()
+        storageRef.child(`${this.basePath}/${songName}/${fileName}`).delete()
     }
 
     // Writes the file details to the realtime db
@@ -75,8 +76,8 @@ export class UploadService {
     }
 
     // Writes the file details to the realtime db
-    private deleteFileData(key: string) {
-        return this.db.list(`${this.basePath}/`).remove(key);
+    private deleteFileData(songKey: string, uploadKey: string) {
+        return this.db.list(`${this.basePath}/${songKey}/Files`).remove(uploadKey);
     }
 
 }
