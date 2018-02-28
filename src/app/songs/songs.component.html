@@ -1,12 +1,32 @@
-<h2>Repertório</h2>
+<div class="row">
 
-<div>
-  <form (ngSubmit)="addSong(song)" #songForm="ngForm">
-    Nome da Música: <input type="text" id="title" required [(ngModel)]="song.title" name="title">
-    <button type="submit" [disabled]="!songForm.form.valid" class="btn btn-primary">Adicionar</button>
-  </form>
-</div>  
+  <div class="col-sm-3">
+    <form *ngIf="auth.canEdit(auth.user$ | async)" (ngSubmit)="addSong(songToAdd)" #songForm="ngForm" class="form-inline">
+      <div class="form-group">
+        <label for="title" class="sr-only">Adicionar Música</label>
+          <input type="text" required [(ngModel)]="songToAdd.title" name="title" class="form-control form-control-sm mb-2" id="title" placeholder="Nome da Música">
+          <button type="submit" [disabled]="!songForm.form.valid" class="btn btn-sm btn-outline-dark mb-2">Adicionar</button>
+      </div>
+    </form>
+    
+    <div class="list-group" *ngFor="let song of songs | async">
+      <a (click)="selectSong(song)">
+        <button type="button" class="list-group-item list-group-item-action">
+          {{ song.title }}
+        </button>
+      </a>
+    </div>
+  </div>
 
-<div *ngFor="let song of songs | async" class="card">
-  <app-song-detail [song]='song' [user]="user" class="card-body"></app-song-detail>
+  <div class="col-sm-9">
+    <div *ngIf="selectedSong">
+        <app-song-detail [song]='selectedSong' [user]="user" class="card-body"></app-song-detail>
+    </div>
+  </div>
+
 </div>
+
+
+
+
+

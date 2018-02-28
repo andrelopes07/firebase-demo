@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Upload } from '../_Models/Upload';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { AlertifyService } from './alertify.service';
 import { Song } from '../_Models/Song';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 
 @Injectable()
 export class UploadService {
-    
-    basePath = 'songs';
+
     uploadsRef: AngularFireList<Upload>;
     uploads: Observable<Upload[]>;
 
-    constructor(private db: AngularFireDatabase, private alertify: AlertifyService) { }
+    constructor(
+        private db: AngularFireDatabase,
+        private alertify: AlertifyService
+    ) { }
 
     getUploads(songKey: string) {
-        this.uploads = this.db.list(`${this.basePath}/${songKey}/Files/`).snapshotChanges().map((actions) => {
+        this.uploadsRef = this.db.list<Upload>(`songs/${songKey}/Files/`);
+        this.uploads = this.uploadsRef.snapshotChanges().map((actions) => {
             return actions.map((a) => {
                 const data = a.payload.val();
                 const $key = a.payload.key;
@@ -28,7 +31,7 @@ export class UploadService {
 
     pushUpload(upload: Upload, songTitle: string, songKey: string) {
         const storageRef = firebase.storage().ref();
-        const uploadTask = storageRef.child(`${this.basePath}/${songTitle}/${upload.file.name}`).put(upload.file);
+        const uploadTask = storageRef.child(`songs/${songTitle}/${upload.file.name}`).put(upload.file);
 
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
             (snapshot: firebase.storage.UploadTaskSnapshot) =>  {
@@ -48,9 +51,8 @@ export class UploadService {
                     upload.createdAt = Date.now();
                     this.saveFileData(upload, songKey);
                     this.alertify.success('Ficheiro adicionado com sucesso!');
-                    return;
                 } else {
-                    this.alertify.error('ERRO: Sem URL de ficheiro!');
+                    this.alertify.error('ERRO: Sem conteúdo!');
                 }
             },
         );
@@ -67,17 +69,20 @@ export class UploadService {
 
     private deleteFileStorage(songName: string, fileName: string) {
         const storageRef = firebase.storage().ref();
-        storageRef.child(`${this.basePath}/${songName}/${fileName}`).delete()
+        storageRef.child(`songs/${songName}/${fileName}`).delete()
     }
 
-    // Writes the file details to the realtime db
     private saveFileData(upload: Upload, songKey: string) {
-        this.db.list(`${this.basePath}/${songKey}/Files`).push(upload);
+        let data = {
+            name: upload.name,
+            url: upload.url,
+            createdAt: upload.createdAt
+        }
+        this.db.list(`songs/${songKey}/Files`).push(data);
     }
 
-    // Writes the file details to the realtime db
     private deleteFileData(songKey: string, uploadKey: string) {
-        return this.db.list(`${this.basePath}/${songKey}/Files`).remove(uploadKey);
+        return this.db.list(`songs/${songKey}/Files`).remove(uploadKey);
     }
 
 }

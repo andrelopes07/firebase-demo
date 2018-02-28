@@ -5,6 +5,8 @@ export interface Roles {
 
 export interface User {
     uid: string;
+    photoURL: string;
+    name: string;
     email: string;
     roles: Roles;
 }

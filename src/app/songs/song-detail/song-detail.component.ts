@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Song } from '../../_Models/Song';
 import { SongsService } from '../../_Services/songs.service';
 import { UploadService } from '../../_Services/upload.service';
@@ -13,7 +13,7 @@ import { User } from '../../_Models/User';
   templateUrl: './song-detail.component.html',
   styleUrls: ['./song-detail.component.css']
 })
-export class SongDetailComponent implements OnInit {
+export class SongDetailComponent implements OnInit, OnChanges {
   @Input() song: Song;
   @Input() user: User;
   uploads: Observable<Upload[]>;
@@ -31,9 +31,13 @@ export class SongDetailComponent implements OnInit {
     this.uploads = this.uploadService.getUploads(this.song.$key);
   }
 
+  ngOnChanges() {
+    this.uploads = this.uploadService.getUploads(this.song.$key);
+  }
+
   removeSong() {
     if(this.auth.canDelete(this.user)) {
-      this.songsService.removeSong(this.song);
+      this.songsService.removeSong(this.song.$key);
       this.alertify.success("Música removida com sucesso!");
     } else {
       this.alertify.error("Acesso Negado!");
@@ -46,13 +50,21 @@ export class SongDetailComponent implements OnInit {
 
   uploadSingle() {
     if(this.auth.canEdit(this.user)) {
-      const file = this.selectedFiles;
+      let file = this.selectedFiles;
       if (file && file.length === 1) {
         this.currentUpload = new Upload(file.item(0));
         this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.$key);
       } else {
         this.alertify.error('Nenhum ficheiro selecionado!');
       }
+    } else {
+      this.alertify.error("Acesso Negado!");
+    }
+  }
+
+  removeFile(upload) {
+    if(this.auth.canEdit(this.user)) {
+      this.uploadService.deleteUpload(this.song, upload);
     } else {
       this.alertify.error("Acesso Negado!");
     }

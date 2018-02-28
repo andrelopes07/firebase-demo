@@ -29,6 +29,11 @@ export class AuthService {
         return this.oAuthLogin(provider);
     }
 
+    facebookLogin() {
+        const provider = new firebase.auth.FacebookAuthProvider();
+        return this.oAuthLogin(provider);
+    }
+
     signOut() {
         this.afAuth.auth.signOut();
     }
@@ -44,6 +49,8 @@ export class AuthService {
         const userRef: AngularFirestoreDocument<any> = this.afStore.doc(`users/${user.uid}`);
         const data: User = {
             uid: user.uid,
+            photoURL: user.photoURL,
+            name: user.displayName,
             email: user.email,
             roles: {
                 standard: true
@@ -75,6 +82,14 @@ export class AuthService {
             }
         }
         return false;
+    }
+
+    loggedIn() {
+        if (localStorage.getItem('firebase:authUser:AIzaSyDj7YBJbNFUDtsDthW2vk8WIJj8tX9gS4M:[DEFAULT]') != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }

@@ -1,0 +1,18 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Foto</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Email</th>
+      <th scope="col">Nivel de Acesso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users | async">
+      <th class="align-middle" scope="row"><img src="{{ user.photoURL }}" width="40" alt=""></th>
+      <td class="align-middle">{{ user.name }}</td>
+      <td class="align-middle">{{ user.email }}</td>
+      <td class="align-middle"><button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button></td>
+    </tr>
+  </tbody>
+</table>

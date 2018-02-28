@@ -1,20 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule }   from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-import { FormsModule }   from '@angular/forms';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
 
 import { AppComponent } from './app.component';
-import { AlertifyService } from './_Services/alertify.service';
-import { UploadService } from './_Services/upload.service';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { SongsComponent } from './songs/songs.component';
 import { SongDetailComponent } from './songs/song-detail/song-detail.component';
-import { SongsService } from './_Services/songs.service';
 import { FileDetailComponent } from './songs/song-detail/file-detail/file-detail.component';
-import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { UsersComponent } from './users/users.component';
+import { LoginComponent } from './login/login.component';
+import { NavbarComponent } from './navbar/navbar.component';
+
+import { AlertifyService } from './_Services/alertify.service';
+import { UploadService } from './_Services/upload.service';
+import { SongsService } from './_Services/songs.service';
 import { AuthService } from './_Services/auth.service';
+import { UserService } from './_Services/user.service';
+
+import { appRoutes } from './route';
+import { AuthGuard } from './_Guards/auth.guard';
+import { AdminGuard } from './_Guards/admin.guard';
+import { SongsResolver } from './_Resolvers/songs.resolver';
 
 
 @NgModule({
@@ -22,7 +35,10 @@ import { AuthService } from './_Services/auth.service';
     AppComponent,
     SongsComponent,
     SongDetailComponent,
-    FileDetailComponent
+    FileDetailComponent,
+    UsersComponent,
+    LoginComponent,
+    NavbarComponent
 ],
   imports: [
     BrowserModule,
@@ -37,13 +53,18 @@ import { AuthService } from './_Services/auth.service';
     AngularFireDatabaseModule,
     AngularFirestoreModule,
     AngularFireStorageModule,
-    FormsModule
+    FormsModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     AuthService,
     SongsService,
     UploadService,
-    AlertifyService
+    AlertifyService,
+    UserService,
+    AuthGuard,
+    AdminGuard,
+    SongsResolver
   ],
   bootstrap: [AppComponent]
 })
