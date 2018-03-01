@@ -28,16 +28,18 @@ export class SongDetailComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    this.uploads = this.uploadService.getUploads(this.song.$key);
+    this.uploads = this.uploadService.getUploads(this.song.id);
   }
 
   ngOnChanges() {
-    this.uploads = this.uploadService.getUploads(this.song.$key);
+    this.uploads = this.uploadService.getUploads(this.song.id);
+    this.currentUpload = null;
+    this.selectedFiles = null;
   }
 
   removeSong() {
     if(this.auth.canDelete(this.user)) {
-      this.songsService.removeSong(this.song.$key);
+      this.songsService.removeSong(this.song.id);
       this.alertify.success("Música removida com sucesso!");
     } else {
       this.alertify.error("Acesso Negado!");
@@ -53,7 +55,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
       let file = this.selectedFiles;
       if (file && file.length === 1) {
         this.currentUpload = new Upload(file.item(0));
-        this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.$key);
+        this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.id)
       } else {
         this.alertify.error('Nenhum ficheiro selecionado!');
       }

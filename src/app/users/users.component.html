@@ -4,6 +4,8 @@
       <th scope="col">Foto</th>
       <th scope="col">Nome</th>
       <th scope="col">Email</th>
+      <th scope="col">Ultimo Login</th>
+      <th scope="col">Membro Desde</th>
       <th scope="col">Nivel de Acesso</th>
     </tr>
   </thead>
@@ -12,6 +14,8 @@
       <th class="align-middle" scope="row"><img src="{{ user.photoURL }}" width="40" alt=""></th>
       <td class="align-middle">{{ user.name }}</td>
       <td class="align-middle">{{ user.email }}</td>
+      <td class="align-middle">{{ user.lastLogin | date }}</td>
+      <td class="align-middle">{{ user.createdAt | date }}</td>
       <td class="align-middle"><button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button></td>
     </tr>
   </tbody>

@@ -8,16 +8,17 @@ import { User } from '../_Models/User';
 
 @Injectable()
 export class AuthService {
+    
     user$: Observable<User>;
 
     constructor(
         private afAuth: AngularFireAuth,
-        private afStore: AngularFirestore,
+        private db: AngularFirestore,
     ) {
         this.user$ = this.afAuth.authState
             .switchMap(user => {
                 if(user) {
-                    return this.afStore.doc<User>(`users/${user.uid}`).valueChanges();
+                    return this.db.doc<User>(`users/${user.uid}`).valueChanges();
                 } else {
                     return Observable.of(null);
                 }
@@ -34,10 +35,6 @@ export class AuthService {
         return this.oAuthLogin(provider);
     }
 
-    signOut() {
-        this.afAuth.auth.signOut();
-    }
-
     private oAuthLogin(provider) {
         return this.afAuth.auth.signInWithPopup(provider)
             .then((credential) => {
@@ -46,7 +43,7 @@ export class AuthService {
     }
 
     private updateUserData(user) {
-        const userRef: AngularFirestoreDocument<any> = this.afStore.doc(`users/${user.uid}`);
+        const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
         const data: User = {
             uid: user.uid,
             photoURL: user.photoURL,
@@ -54,7 +51,9 @@ export class AuthService {
             email: user.email,
             roles: {
                 standard: true
-            }
+            },
+            createdAt: user.metadata.a,
+            lastLogin: user.metadata.b
         }
         return userRef.set(data, { merge: true });
     }
@@ -90,6 +89,10 @@ export class AuthService {
         } else {
             return false;
         }
+    }
+
+    signOut() {
+        this.afAuth.auth.signOut();
     }
     
 }

@@ -1,25 +1,27 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { User } from '../_Models/User';
 import { Observable } from 'rxjs/Observable';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
+
 
 @Injectable()
 export class UserService {
-  private usersCollection: AngularFirestoreCollection<User>;
-  users: Observable<User[]>;
+  
+  private usersRef: AngularFirestoreCollection<User>;
+  users$: Observable<User[]>;
 
   constructor(
-    private afStore: AngularFirestore
+    private db: AngularFirestore
   ) { }
 
   getUsers() {
-    this.usersCollection = this.afStore.collection<User>('users');
-    this.users = this.usersCollection.valueChanges();
-    return this.users;
+    this.usersRef = this.db.collection<User>('users', ref => ref.orderBy('name'));
+    this.users$ = this.usersRef.valueChanges();
+    return this.users$;
   }
 
   toggleAdminRole(user) {
-    const userRef: AngularFirestoreDocument<any> = this.afStore.doc(`users/${user.uid}`);
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
       const data : User = {
         uid : user.uid,
         photoURL: user.photoURL,
@@ -28,7 +30,9 @@ export class UserService {
         roles: {
             admin: user.roles.admin ? false : true,
             standard: true
-        }
+        },
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin
       }
       return userRef.set(data, { merge: true });
   }

@@ -8,7 +8,7 @@ import { AlertifyService } from '../_Services/alertify.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   constructor(
     private afAuth: AuthService,
@@ -16,12 +16,8 @@ export class LoginComponent implements OnInit {
     private alertify: AlertifyService
   ) { }
 
-  ngOnInit() {
-
-  }
-
   googleLogin() {
-    this.afAuth.googleLogin().then(data => {
+    this.afAuth.googleLogin().then(() => {
       this.router.navigate(['/songs']);
       this.alertify.success('Login efetuado com sucesso!');
     }, error => {

@@ -4,32 +4,32 @@ import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { AlertifyService } from './alertify.service';
 import { Song } from '../_Models/Song';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 
 @Injectable()
 export class UploadService {
 
-    uploadsRef: AngularFireList<Upload>;
-    uploads: Observable<Upload[]>;
+    private uploadsRef: AngularFirestoreCollection<Upload>;
+    upload$: Observable<Upload[]>;
 
     constructor(
-        private db: AngularFireDatabase,
+        private db: AngularFirestore,
         private alertify: AlertifyService
     ) { }
 
-    getUploads(songKey: string) {
-        this.uploadsRef = this.db.list<Upload>(`songs/${songKey}/Files/`);
-        this.uploads = this.uploadsRef.snapshotChanges().map((actions) => {
+    getUploads(id: string) {
+        this.uploadsRef = this.db.collection<Upload>(`songs/${id}/Files/`, ref => ref.orderBy('name'));
+        this.upload$ = this.uploadsRef.snapshotChanges().map((actions) => {
             return actions.map((a) => {
-                const data = a.payload.val();
-                const $key = a.payload.key;
-                return { $key, ...data };
+                const data = a.payload.doc.data() as Upload;
+                const id = a.payload.doc.id;
+                return { id, ...data };
             });
         });
-        return this.uploads;
+        return this.upload$;
     }
 
-    pushUpload(upload: Upload, songTitle: string, songKey: string) {
+    pushUpload(upload: Upload, songTitle: string, id: string) {
         const storageRef = firebase.storage().ref();
         const uploadTask = storageRef.child(`songs/${songTitle}/${upload.file.name}`).put(upload.file);
 
@@ -49,7 +49,7 @@ export class UploadService {
                     upload.url = uploadTask.snapshot.downloadURL;
                     upload.name = upload.file.name;
                     upload.createdAt = Date.now();
-                    this.saveFileData(upload, songKey);
+                    this.saveFileData(upload, id);
                     this.alertify.success('Ficheiro adicionado com sucesso!');
                 } else {
                     this.alertify.error('ERRO: Sem conteúdo!');
@@ -59,7 +59,7 @@ export class UploadService {
     }
 
     deleteUpload(song: Song, upload: Upload) {
-        this.deleteFileData(song.$key, upload.$key)
+        this.deleteFileData(song.id, upload.id)
             .then( () => {
                 this.deleteFileStorage(song.title, upload.name);
                 this.alertify.success('Ficheiro removido com sucesso!');
@@ -72,17 +72,17 @@ export class UploadService {
         storageRef.child(`songs/${songName}/${fileName}`).delete()
     }
 
-    private saveFileData(upload: Upload, songKey: string) {
+    private saveFileData(upload: Upload, id: string) {
         let data = {
             name: upload.name,
             url: upload.url,
             createdAt: upload.createdAt
         }
-        this.db.list(`songs/${songKey}/Files`).push(data);
+        this.db.collection(`songs/${id}/Files`).add(data);
     }
 
-    private deleteFileData(songKey: string, uploadKey: string) {
-        return this.db.list(`songs/${songKey}/Files`).remove(uploadKey);
+    private deleteFileData(songId: string, uploadId: string) {
+        return this.db.collection(`songs/${songId}/Files`).doc(uploadId).delete();
     }
 
 }

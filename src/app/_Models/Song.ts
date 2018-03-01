@@ -1,4 +1,4 @@
 export class Song {
-    $key?: string;
+    id?: string;
     title: string;
 }

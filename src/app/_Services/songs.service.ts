@@ -3,37 +3,37 @@ import { Observable } from 'rxjs/Observable';
 import { Song } from '../_Models/Song';
 import { AlertifyService } from './alertify.service';
 import * as firebase from 'firebase';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 
 @Injectable()
 export class SongsService {
 
-    songsRef: AngularFireList<Song>;
-    songs: Observable<Song[]>;
+    private songsRef: AngularFirestoreCollection<Song>;
+    songs$: Observable<Song[]>;
 
     constructor(
         private alertify: AlertifyService,
-        private db: AngularFireDatabase
+        private db: AngularFirestore
     ) { }
 
     getSongs() {
-        this.songsRef = this.db.list<Song>('songs');
-        this.songs = this.songsRef.snapshotChanges().map(actions => {
+        this.songsRef = this.db.collection<Song>('songs', ref => ref.orderBy('title'));
+        this.songs$ = this.songsRef.snapshotChanges().map(actions => {
             return actions.map((a) => {
-                const data = a.payload.val();
-                const $key = a.payload.key;
-                return { $key, ...data };
+                const data = a.payload.doc.data() as Song;
+                const id = a.payload.doc.id;
+                return { id, ...data };
             });
         })
-        return this.songs;
+        return this.songs$;
     }
 
     addSong(song: Song) {
-        this.db.list(`songs/`).push(song);
+        this.db.collection(`songs/`).add(song);
     }
 
-    removeSong(songKey: string) {
-        return this.db.list(`songs`).remove(songKey)
+    removeSong(id: string) {
+        return this.db.collection(`songs`).doc(id).delete()
             .then( () => {
                 this.alertify.success('Música removida com sucesso!');
             })

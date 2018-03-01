@@ -2,24 +2,26 @@
     <h3>{{ song.title }}</h3>
 </div>
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-        <th scope="col">Ficheiro</th>
-        <th scope="col">Data de Carregamento</th>
-        <th scope="col">Download</th>
-        <th scope="col" *ngIf="auth.canEdit(auth.user$ | async)">Remover</th>
+<div class="table-responsive">
+    <table class="table table-hover table-striped table-sm">
+        <thead>
+            <tr>
+            <th scope="col">Ficheiro</th>
+            <th scope="col">Data de Carregamento</th>
+            <th scope="col">Download</th>
+            <th scope="col" *ngIf="auth.canEdit(auth.user$ | async)">Remover</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let upload of uploads | async">
+            <td class="align-middle">{{ upload.name }}</td>
+            <td class="align-middle">{{ upload.createdAt | date }}</td>
+            <td class="align-middle"><a href="{{ upload.url }}" ><button class="btn btn-sm btn-outline-dark">Download</button></a></td>
+            <td *ngIf="auth.canEdit(auth.user$ | async)" class="align-middle"><button (click)="removeFile(upload)"class="btn btn-sm btn-outline-danger">Remover</button></td>    
         </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let upload of uploads | async">
-        <th class="align-middle" scope="row">{{ upload.name }}</th>
-        <td class="align-middle">{{ upload.createdAt | date }}</td>
-        <td class="align-middle"><a href="{{ upload.url }}" download><button class="btn btn-sm btn-outline-dark">Download</button></a></td>
-        <td *ngIf="auth.canEdit(auth.user$ | async)" class="align-middle"><button (click)="removeFile(upload)"class="btn btn-sm btn-outline-danger">Remover</button></td>    
-    </tr>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <div *ngIf="auth.canEdit(auth.user$ | async)">
     <h5>Carregar Ficheiro</h5>
@@ -28,7 +30,8 @@
         Progresso: <progress class="progress is-success" max=100 value="{{ currentUpload?.progress }}"></progress>
     </div>
 
-    <input [disabled]="currentUpload" type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3">
-
-    <button [disabled]="!selectedFiles || currentUpload" (click)="uploadSingle()" class="btn btn-sm btn-outline-dark">Upload</button>
+    <form (ngSubmit)="uploadSingle()" #uploadForm="ngForm" class="form-inline">
+        <input [disabled]="currentUpload" type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3" class="form-control form-control-sm mb-2 mr-sm-2">
+        <button type="submit" [disabled]="!selectedFiles || currentUpload" class="btn btn-sm btn-outline-dark mb-2">Upload</button>
+    </form>
 </div>
