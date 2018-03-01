@@ -1,12 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Upload } from '../_Models/Upload';
 import { AlertifyService } from '../_Services/alertify.service';
-import { Observable } from 'rxjs/Observable';
 import { SongsService } from '../_Services/songs.service';
-import { Song } from '../_Models/Song';
 import { AuthService } from '../_Services/auth.service';
+import { Song } from '../_Models/Song';
 import { User } from '../_Models/User';
-import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-songs',
@@ -22,10 +20,9 @@ export class SongsComponent implements OnInit {
   selectedSong: Song;
 
   constructor(
-    private auth: AuthService,
+    public auth: AuthService,
     private songsService: SongsService,
-    private alertify: AlertifyService,
-    private route: ActivatedRoute
+    private alertify: AlertifyService
   ) { }
 
   ngOnInit() {

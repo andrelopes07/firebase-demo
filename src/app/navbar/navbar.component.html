@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark justify-content-between">
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
 
   <a class="navbar-brand" [routerLink]="['/songs']">
     <img src="../assets/gatunosLogo.jpg" width="30" height="30" class="d-inline-block align-top" alt="Gatunos Logo">
@@ -9,7 +9,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarNav">
+  <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
     <ul class="navbar-nav">
       <li routerLinkActive="active" class="nav-item">
         <a class="nav-link" [routerLink]="['/songs']">Repertório <span class="sr-only">(current)</span></a>
@@ -18,7 +18,7 @@
         <a class="nav-link" [routerLink]="['/users']">Utilizadores <span class="sr-only">(current)</span></a>
       </li>
     </ul>
+    <button (click)="logout()" class="btn btn-dark">Logout</button>
   </div>
-  <button (click)="logout()" class="btn btn-dark">Logout</button>
 
 </nav>

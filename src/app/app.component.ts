@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { AlertifyService } from './_Services/alertify.service';
 import { AuthService } from './_Services/auth.service';
 
 @Component({
   selector: 'app-root',
   template: `
     
-  <div *ngIf="afAuth.user$ | async as user">
+  <div *ngIf="auth.user$ | async as user">
     <app-navbar [user]="user"></app-navbar>
   </div>
 
@@ -20,7 +19,7 @@ import { AuthService } from './_Services/auth.service';
 export class AppComponent {
 
   constructor(
-    public afAuth: AuthService
+    public auth: AuthService
   ) { }
 
 }
