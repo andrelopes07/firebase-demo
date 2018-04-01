@@ -35,10 +35,20 @@ export class SongsComponent implements OnInit {
     if(this.auth.canEdit(this.user)) {
       this.songsService.addSong(song);
       this.songToAdd.title = '';
+      this.selectedSong = undefined;
       this.alertify.success('Musica adicionada com sucesso!');
     } else {
       this.alertify.error('Acesso negado!');
     }
+  }
+
+  removeSong(song: Song) {
+      this.alertify.confirm(`Tem a certeza que deseja remover ${song.title}?`, () => {
+      this.songsService.removeSong(song.id).then(() => {
+        this.selectedSong = null;
+        this.alertify.success('Música removida com sucesso!');
+      });
+    });
   }
 
   selectSong(song) {

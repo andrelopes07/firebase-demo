@@ -14,7 +14,7 @@ import { AuthService } from './_Services/auth.service';
   </div>
   
   `,
-  styleUrls: ['app.component.css']
+  styleUrls: []
 })
 export class AppComponent {
 

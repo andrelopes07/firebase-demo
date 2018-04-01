@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule }   from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireStorageModule } from 'angularfire2/storage';
@@ -21,9 +21,21 @@ import { SongsService } from './_Services/songs.service';
 import { AuthService } from './_Services/auth.service';
 import { UserService } from './_Services/user.service';
 
-import { appRoutes } from './route';
 import { AuthGuard } from './_Guards/auth.guard';
 
+export const appRoutes: Routes = [
+  { path: '', redirectTo: 'songs', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'songs', component: SongsComponent },
+      { path: 'users', component: UsersComponent },
+    ]
+  },
+  { path: '**', redirectTo: 'songs', pathMatch: 'full'}
+];
 
 @NgModule({
   declarations: [

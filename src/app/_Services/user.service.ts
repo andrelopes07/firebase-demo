@@ -37,4 +37,20 @@ export class UserService {
       return userRef.set(data, { merge: true });
   }
 
+  toggleStandardRole(user) {
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
+      const data : User = {
+        uid : user.uid,
+        photoURL: user.photoURL,
+        name: user.name,
+        email: user.email,
+        roles: {
+            standard: user.roles.standard ? false : true,
+        },
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin
+      }
+      return userRef.set(data, { merge: true });
+  }
+
 }

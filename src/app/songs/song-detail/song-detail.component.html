@@ -1,5 +1,5 @@
 <div>
-    <h3>{{ song.title }}</h3>
+    <h3 class="mb-3">{{ song.title }}</h3>
 </div>
 
 <div class="table-responsive">
@@ -8,16 +8,20 @@
             <tr>
             <th scope="col">Ficheiro</th>
             <th scope="col">Data de Carregamento</th>
-            <th scope="col">Download</th>
-            <th scope="col" *ngIf="auth.canEdit(auth.user$ | async)">Remover</th>
+            <th scope="col" class="text-center">Download</th>
+            <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col" class="text-center">Remover</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let upload of uploads | async">
             <td class="align-middle">{{ upload.name }}</td>
             <td class="align-middle">{{ upload.createdAt | date }}</td>
-            <td class="align-middle"><a href="{{ upload.url }}" ><button class="btn btn-sm btn-outline-dark">Download</button></a></td>
-            <td *ngIf="auth.canEdit(auth.user$ | async)" class="align-middle"><button (click)="removeFile(upload)"class="btn btn-sm btn-outline-danger">Remover</button></td>    
+            <td class="text-center actions">
+                <a class="mr-2" [href]="upload.url" download><i class="fa fa-download"></i></a>
+            </td>   
+            <td class="text-center">
+                <a *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeFile(upload)"><i class="fa fa-trash-alt"></i></a>
+            </td> 
         </tr>
         </tbody>
     </table>

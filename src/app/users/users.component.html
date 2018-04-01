@@ -16,7 +16,16 @@
       <td class="align-middle">{{ user.email }}</td>
       <td class="align-middle">{{ user.lastLogin | date }}</td>
       <td class="align-middle">{{ user.createdAt | date }}</td>
-      <td class="align-middle"><button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button></td>
+      <td class="align-middle">
+        <div *ngIf="auth.canEdit(auth.user$ | async)">
+            <button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button>
+            <button (click)="toggleStandard(user)" class="btn btn-sm">Standard {{ user.roles.standard }}</button>
+        </div>
+        <div *ngIf="!auth.canEdit(auth.user$ | async)">
+          {{ user.roles.admin }}
+        </div>
+        
+      </td>
     </tr>
   </tbody>
 </table>

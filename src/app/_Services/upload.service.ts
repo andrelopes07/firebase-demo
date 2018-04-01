@@ -62,7 +62,6 @@ export class UploadService {
         this.deleteFileData(song.id, upload.id)
             .then( () => {
                 this.deleteFileStorage(song.title, upload.name);
-                this.alertify.success('Ficheiro removido com sucesso!');
             })
             .catch((error) => this.alertify.error(error));
     }

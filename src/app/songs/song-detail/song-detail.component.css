@@ -1,0 +1,17 @@
+.actions {
+    font-size: 18px;
+    color: #343A40;
+}
+
+.fa-trash-alt:hover {
+    color: rgb(201, 71, 71);
+}
+
+a {
+    color: #343A40;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #D98600;
+}

@@ -37,15 +37,6 @@ export class SongDetailComponent implements OnInit, OnChanges {
     this.selectedFiles = null;
   }
 
-  removeSong() {
-    if(this.auth.canDelete(this.user)) {
-      this.songsService.removeSong(this.song.id);
-      this.alertify.success("Música removida com sucesso!");
-    } else {
-      this.alertify.error("Acesso Negado!");
-    }
-  }
-
   detectFiles($event: Event) {
     this.selectedFiles = ($event.target as HTMLInputElement).files;
   }
@@ -66,7 +57,10 @@ export class SongDetailComponent implements OnInit, OnChanges {
 
   removeFile(upload) {
     if(this.auth.canEdit(this.user)) {
-      this.uploadService.deleteUpload(this.song, upload);
+      this.alertify.confirm("Tem a certeza que deseja remover este Ficheiro?", () => {
+        this.uploadService.deleteUpload(this.song, upload);
+        this.alertify.success('Ficheiro removido com sucesso!');
+      });
     } else {
       this.alertify.error("Acesso Negado!");
     }

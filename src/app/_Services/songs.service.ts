@@ -33,12 +33,9 @@ export class SongsService {
 
     removeSong(id: string) {
         return this.db.collection(`songs`).doc(id).delete()
-            .then( () => {
-                this.alertify.success('Música removida com sucesso!');
-            })
-            .catch((error) => {
-                this.alertify.error(error)
-            });
+        .catch((error) => {
+            this.alertify.error(error)
+        });
     }
 
 }
