@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule }   from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -24,6 +27,7 @@ import { UserService } from './_Services/user.service';
 import { AuthGuard } from './_Guards/auth.guard';
 import { VideoService } from './_Services/video.service';
 import { SafePipe } from './_Pipes/safe.pipe';
+import { FileSizePipe } from './_Pipes/fileSize.pipe';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: 'songs', pathMatch: 'full' },
@@ -47,7 +51,8 @@ export const appRoutes: Routes = [
     UsersComponent,
     LoginComponent,
     NavbarComponent,
-    SafePipe
+    SafePipe,
+    FileSizePipe
 ],
   imports: [
     BrowserModule,
@@ -60,7 +65,9 @@ export const appRoutes: Routes = [
     AngularFireAuthModule,
     AngularFirestoreModule,
     FormsModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    ModalModule.forRoot(),
+    ProgressbarModule.forRoot()
   ],
   providers: [
     AuthService,

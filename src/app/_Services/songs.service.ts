@@ -3,12 +3,15 @@ import { Observable } from 'rxjs/Observable';
 import { Song } from '../_Models/Song';
 import { AlertifyService } from './alertify.service';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class SongsService {
 
     private songsRef: AngularFirestoreCollection<Song>;
     songs$: Observable<Song[]>;
+    songsToCheck: Subscription;
 
     constructor(
         private alertify: AlertifyService,
@@ -28,7 +31,18 @@ export class SongsService {
     }
 
     addSong(song: Song) {
-        return this.db.collection(`songs/`).add(song);
+        const songData = {
+            title: song.title
+        };
+        this.songsRef = this.db.collection<Song>('songs', ref => ref.where('title', '==', song.title));
+        this.songsToCheck = this.songsRef.valueChanges().pipe(take(1)).subscribe(data => {
+            if(data.length === 0) {
+                this.alertify.success('Musica adicionada com sucesso!');
+                this.db.collection(`songs/`).add(songData);
+            } else {
+                this.alertify.error('Musica já existe!');
+            }
+        });
     }
 
     removeSong(id: string) {

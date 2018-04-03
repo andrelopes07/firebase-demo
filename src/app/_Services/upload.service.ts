@@ -5,12 +5,15 @@ import { Observable } from 'rxjs/Observable';
 import { AlertifyService } from './alertify.service';
 import { Song } from '../_Models/Song';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class UploadService {
 
     private uploadsRef: AngularFirestoreCollection<Upload>;
     upload$: Observable<Upload[]>;
+    uploadsToCheck: Subscription;
 
     constructor(
         private db: AngularFirestore,
@@ -30,33 +33,41 @@ export class UploadService {
     }
 
     pushUpload(upload: Upload, songTitle: string, id: string) {
-        const storageRef = firebase.storage().ref();
-        const uploadTask = storageRef.child(`songs/${songTitle}/${upload.file.name}`).put(upload.file);
-
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-            (snapshot: firebase.storage.UploadTaskSnapshot) =>  {
-                // Upload in progress
-                const snap = snapshot;
-                upload.progress = (snap.bytesTransferred / snap.totalBytes) * 100
-            },
-            (error) => {
-                // Upload failed
-                this.alertify.error(error.message);
-            },
-            () => {
-                // Upload success
-                if (uploadTask.snapshot.downloadURL) {
-                    upload.url = uploadTask.snapshot.downloadURL;
-                    upload.name = upload.file.name;
-                    upload.size = upload.file.size;
-                    upload.createdAt = Date.now();
-                    this.saveFileData(upload, id);
-                    this.alertify.success('Ficheiro adicionado com sucesso!');
-                } else {
-                    this.alertify.error('ERRO: Sem conteúdo!');
-                }
-            },
-        );
+        const name = upload.file.name;
+        this.uploadsRef = this.db.collection<Upload>(`songs/${id}/Files/`, ref => ref.where('name', '==', name));
+        this.uploadsToCheck = this.uploadsRef.valueChanges().pipe(take(1)).subscribe(data => {
+            if(data.length === 0) {
+                const storageRef = firebase.storage().ref();
+                const uploadTask = storageRef.child(`songs/${songTitle}/${upload.file.name}`).put(upload.file);
+        
+                uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                    (snapshot: firebase.storage.UploadTaskSnapshot) =>  {
+                        // Upload in progress
+                        const snap = snapshot;
+                        upload.progress = (snap.bytesTransferred / snap.totalBytes) * 100
+                    },
+                    (error) => {
+                        // Upload failed
+                        this.alertify.error(error.message);
+                    },
+                    () => {
+                        // Upload success
+                        if (uploadTask.snapshot.downloadURL) {
+                            upload.url = uploadTask.snapshot.downloadURL;
+                            upload.name = upload.file.name;
+                            upload.size = upload.file.size;
+                            upload.createdAt = Date.now();
+                            this.saveFileData(upload, id);
+                            this.alertify.success('Ficheiro adicionado com sucesso!');
+                        } else {
+                            this.alertify.error('ERRO: Sem conteúdo!');
+                        }
+                    },
+                );
+            } else {
+                this.alertify.error('Ficheiro já existe!');
+            }
+        });
     }
 
     deleteUpload(song: Song, upload: Upload) {

@@ -11,7 +11,7 @@ import { AlertifyService } from '../_Services/alertify.service';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  users: Observable<User[]>;
+  users: User[];
   user: User;
 
   constructor(
@@ -21,7 +21,9 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.users = this.userService.getUsers();
+    this.userService.getUsers().forEach(data => {
+      this.users = data;
+    });
     this.auth.user$.subscribe(data => {
       this.user = data;
     });

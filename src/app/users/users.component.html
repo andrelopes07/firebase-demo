@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let user of users | async">
+    <tr *ngFor="let user of users">
       <th class="align-middle" scope="row"><img src="{{ user.photoURL }}" width="40" alt=""></th>
       <td class="align-middle">{{ user.name }}</td>
       <td class="align-middle">{{ user.email }}</td>

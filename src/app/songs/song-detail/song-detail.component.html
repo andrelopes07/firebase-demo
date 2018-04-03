@@ -1,40 +1,35 @@
 <div>
-    <h3 class="mb-3">{{ song.title }}</h3>
+    <h1 class="songTitle mb-3"><strong>{{ song.title }}</strong></h1>
 </div>
 
 <div class="btn-group mt-2" role="group" aria-label="Tab Selecionada">
-    <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">Ficheiros</button>
-    <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">Vídeos</button>
+    <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">
+        Ficheiros <span class="badge badge-light">{{ uploads.length }}</span>
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">
+        Vídeos <span class="badge badge-light">{{ videos.length }}</span>
+    </button>
 </div>
 
 <!-- UPLOAD FORM -->
-<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'files'" class="float-right">
-    <span *ngIf="currentUpload">
-        Progresso: <progress class="progress is-success" max=100 value="{{ currentUpload?.progress }}"></progress>
-    </span>
-
-    <form (ngSubmit)="uploadSingle()" #uploadForm="ngForm" class="input-group">
-        <input [disabled]="currentUpload" type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3" class="form-control" aria-label="Ficheiro a Carregar" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button type="submit" [disabled]="!selectedFiles || currentUpload" class="btn btn-secondary">Upload</button>
-        </div>
-    </form>
+<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'files'" class="float-right mt-2">
+    <button type="button" class="btn btn-secondary" (click)="openModal(upload)">Carregar Ficheiro</button>
 </span>
 
 <!-- ADD VIDEO FORM -->
-<span *ngIf="selectedTab == 'videos'" class="float-right">
-    <form *ngIf="auth.canEdit(auth.user$ | async)" (ngSubmit)="addVideo(videoToAdd)" #videoForm="ngForm" class="input-group mr-3">
-        <input type="text" required [(ngModel)]="videoToAdd.url" name="url" class="form-control" placeholder="ID do Vídeo (YouTube)..." aria-label="Url do Vídeo" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-secondary" type="submit" [disabled]="!videoForm.form.valid">Adicionar</button>
-        </div>
-    </form>
+<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'videos'" class="float-right mt-2">
+    <button type="button" class="btn btn-secondary" (click)="openModal(video)">Adicionar Vídeo</button>
 </span>
 
 <!-- FILES TAB -->
 <div *ngIf="selectedTab === 'files'" class="files mt-3">
+    <div *ngIf="uploads.length == 0">
+        <div class="jumbotron text-center">
+            <h2>Não existem ficheiros para esta música.</h2>
+        </div>
+    </div>
     <!-- FILES TABLE -->
-    <div class="table-responsive">
+    <div *ngIf="uploads.length != 0" class="table-responsive">
         <table class="table table-hover table-striped table-sm">
             <thead>
                 <tr>
@@ -46,9 +41,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let upload of uploads | async">
+                <tr *ngFor="let upload of uploads">
                 <td class="align-middle">{{ upload.name }}</td>
-                <td class="align-middle">{{ upload.size / 1024 / 1024 | number:'1.2-2' }} MB</td>
+                <td class="align-middle">{{ upload.size | fileSize }}</td>
                 <td class="align-middle">{{ upload.createdAt | date }}</td>
                 <td class="text-center actions">
                     <a class="mr-2" [href]="upload.url" download><i class="fa fa-download"></i></a>
@@ -64,7 +59,12 @@
 
 <!-- VIDEOS TAB -->
 <div *ngIf="selectedTab === 'videos'" class="videos mt-3">
-    <span *ngFor="let video of videos | async">
+    <div *ngIf="videos.length == 0">
+        <div class="jumbotron text-center">
+            <h2>Não existem vídeos para esta música.</h2>
+        </div>
+    </div>
+    <span *ngFor="let video of videos">
         <iframe
             width="320" 
             height="200" 
@@ -77,3 +77,42 @@
             </span>
     </span>
 </div>
+
+<!-- UPLOAD MODAL -->
+<ng-template #upload>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Carregar Ficheiro</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="uploadSingle()" #uploadForm="ngForm" class="input-group">
+            <input type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3" class="form-control" aria-label="Ficheiro a Carregar" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button type="submit" [disabled]="!selectedFiles" class="btn btn-secondary">Upload</button>
+            </div>
+        </form>
+        <div class="mt-3">
+            <progressbar [animate]="false" [value]="currentUpload?.progress" [class.completed]="currentUpload?.progress == 100" type="success"></progressbar>
+        </div>
+    </div>
+</ng-template>
+
+<!-- VIDEO MODAL -->
+<ng-template #video>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Adicionar Vídeo</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="addVideo(videoToAdd)" #videoForm="ngForm" class="input-group mr-3">
+            <input type="text" required [(ngModel)]="videoToAdd.url" name="url" class="form-control" placeholder="ID do Vídeo (YouTube)..." aria-label="Url do Vídeo" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-secondary" type="submit" [disabled]="!videoForm.form.valid">Adicionar</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

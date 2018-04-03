@@ -1,5 +1,13 @@
+.songTitle {
+    font-family: 'Quattrocento', serif;
+}
+
 .actions {
     font-size: 18px;
+    color: #545B62;
+}
+
+.fa-trash-alt {
     color: #545B62;
 }
 
@@ -17,7 +25,7 @@ a:hover {
 }
 
 .files, .videos {
-    height: 70vh;
+    height: 65vh;
     overflow-y: auto;
 }
 
@@ -28,7 +36,7 @@ a:hover {
 
 /* width */
 ::-webkit-scrollbar {
-    width: 3px;
+    width: 5px;
 }
 
 /* Track */
@@ -44,4 +52,9 @@ a:hover {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: rgb(77, 77, 77);
+}
+
+.completed {
+    transition: opacity 2s ease-in-out;
+    opacity: 0;
 }
