@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges} from '@angular/core';
 import { SongsService } from '../../_Services/songs.service';
 import { UploadService } from '../../_Services/upload.service';
 import { AlertifyService } from '../../_Services/alertify.service';
@@ -7,6 +7,10 @@ import { Song } from '../../_Models/Song';
 import { User } from '../../_Models/User';
 import { Upload } from '../../_Models/Upload';
 import { Observable } from 'rxjs/Observable';
+import { DecimalPipe } from '@angular/common';
+import { VideoService } from '../../_Services/video.service';
+import { Video } from '../../_Models/Video';
+import { SafePipe } from '../../_Pipes/safe.pipe';
 
 @Component({
   selector: 'app-song-detail',
@@ -17,28 +21,48 @@ export class SongDetailComponent implements OnInit, OnChanges {
   @Input() song: Song;
   @Input() user: User;
   uploads: Observable<Upload[]>;
+  videos: Observable<Video[]>;
   selectedFiles: FileList | null;
   currentUpload: Upload;
+  selectedTab: string;
+  videoToAdd: Video = {
+    url: ''
+  };
 
   constructor(
     public auth: AuthService,
     private songsService: SongsService,
     private uploadService: UploadService,
+    private videoService: VideoService,
     private alertify: AlertifyService
   ) { }
 
   ngOnInit() {
     this.uploads = this.uploadService.getUploads(this.song.id);
+    this.videos = this.videoService.getVideos(this.song.id);
+    this.selectedTab = 'files';
   }
 
   ngOnChanges() {
     this.uploads = this.uploadService.getUploads(this.song.id);
+    this.videos = this.videoService.getVideos(this.song.id);
+    this.selectedTab = 'files';
     this.currentUpload = null;
     this.selectedFiles = null;
   }
 
+  selectTab(tab: string) {
+    this.selectedTab = tab;
+  }
+
+  check() {
+    console.log(this.currentUpload);
+    console.log(this.selectedFiles);
+  }
+
   detectFiles($event: Event) {
     this.selectedFiles = ($event.target as HTMLInputElement).files;
+    console.log($event);
   }
 
   uploadSingle() {
@@ -46,7 +70,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
       let file = this.selectedFiles;
       if (file && file.length === 1) {
         this.currentUpload = new Upload(file.item(0));
-        this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.id)
+        this.uploadService.pushUpload(this.currentUpload, this.song.title, this.song.id);
       } else {
         this.alertify.error('Nenhum ficheiro selecionado!');
       }
@@ -55,11 +79,31 @@ export class SongDetailComponent implements OnInit, OnChanges {
     }
   }
 
-  removeFile(upload) {
+  removeFile(upload: Upload) {
     if(this.auth.canEdit(this.user)) {
-      this.alertify.confirm("Tem a certeza que deseja remover este Ficheiro?", () => {
+      this.alertify.confirm(`Tem a certeza que deseja remover ${upload.name}?`, () => {
         this.uploadService.deleteUpload(this.song, upload);
         this.alertify.success('Ficheiro removido com sucesso!');
+      });
+    } else {
+      this.alertify.error("Acesso Negado!");
+    }
+  }
+
+  addVideo() {
+    if(this.auth.canEdit(this.user)) {
+      this.videoService.addVideo(this.videoToAdd, this.song.id);
+      this.videoToAdd.url = '';
+    } else {
+      this.alertify.error("Acesso Negado!");
+    }
+  }
+
+  removeVideo(video: Video) {
+    if(this.auth.canEdit(this.user)) {
+      this.alertify.confirm(`Tem a certeza que deseja remover este vídeo?`, () => {
+        this.videoService.deleteVideo(this.song.id, video.id);
+        this.alertify.success('Vídeo removido com sucesso!');
       });
     } else {
       this.alertify.error("Acesso Negado!");

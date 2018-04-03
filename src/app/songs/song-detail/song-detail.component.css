@@ -1,6 +1,6 @@
 .actions {
     font-size: 18px;
-    color: #343A40;
+    color: #545B62;
 }
 
 .fa-trash-alt:hover {
@@ -8,10 +8,40 @@
 }
 
 a {
-    color: #343A40;
+    color: #545B62;
     cursor: pointer;
 }
 
 a:hover {
     color: #D98600;
+}
+
+.files, .videos {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.btn-block {
+    width: 320px;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #a3a3a3c7;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(77, 77, 77);
 }

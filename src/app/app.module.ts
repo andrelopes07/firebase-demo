@@ -22,6 +22,8 @@ import { AuthService } from './_Services/auth.service';
 import { UserService } from './_Services/user.service';
 
 import { AuthGuard } from './_Guards/auth.guard';
+import { VideoService } from './_Services/video.service';
+import { SafePipe } from './_Pipes/safe.pipe';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: 'songs', pathMatch: 'full' },
@@ -44,7 +46,8 @@ export const appRoutes: Routes = [
     SongDetailComponent,
     UsersComponent,
     LoginComponent,
-    NavbarComponent
+    NavbarComponent,
+    SafePipe
 ],
   imports: [
     BrowserModule,
@@ -63,6 +66,7 @@ export const appRoutes: Routes = [
     AuthService,
     SongsService,
     UploadService,
+    VideoService,
     AlertifyService,
     UserService,
     AuthGuard

@@ -6,7 +6,7 @@
       <th scope="col">Email</th>
       <th scope="col">Ultimo Login</th>
       <th scope="col">Membro Desde</th>
-      <th scope="col">Nivel de Acesso</th>
+      <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col">Nivel de Acesso</th>
     </tr>
   </thead>
   <tbody>
@@ -16,15 +16,11 @@
       <td class="align-middle">{{ user.email }}</td>
       <td class="align-middle">{{ user.lastLogin | date }}</td>
       <td class="align-middle">{{ user.createdAt | date }}</td>
-      <td class="align-middle">
-        <div *ngIf="auth.canEdit(auth.user$ | async)">
+      <td *ngIf="auth.canEdit(auth.user$ | async)" class="align-middle">
+        <div>
             <button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button>
             <button (click)="toggleStandard(user)" class="btn btn-sm">Standard {{ user.roles.standard }}</button>
         </div>
-        <div *ngIf="!auth.canEdit(auth.user$ | async)">
-          {{ user.roles.admin }}
-        </div>
-        
       </td>
     </tr>
   </tbody>

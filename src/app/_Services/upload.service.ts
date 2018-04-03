@@ -48,6 +48,7 @@ export class UploadService {
                 if (uploadTask.snapshot.downloadURL) {
                     upload.url = uploadTask.snapshot.downloadURL;
                     upload.name = upload.file.name;
+                    upload.size = upload.file.size;
                     upload.createdAt = Date.now();
                     this.saveFileData(upload, id);
                     this.alertify.success('Ficheiro adicionado com sucesso!');
@@ -75,9 +76,10 @@ export class UploadService {
         let data = {
             name: upload.name,
             url: upload.url,
+            size: upload.size,
             createdAt: upload.createdAt
         }
-        this.db.collection(`songs/${id}/Files`).add(data);
+        return this.db.collection(`songs/${id}/Files`).add(data);
     }
 
     private deleteFileData(songId: string, uploadId: string) {

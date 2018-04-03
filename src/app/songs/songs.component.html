@@ -3,20 +3,21 @@
   <!-- ADD SONG FORM -->
   <div class="col-lg-3">
 
-    <form *ngIf="auth.canEdit(auth.user$ | async)" (ngSubmit)="addSong(songToAdd)" #songForm="ngForm" class="form-inline mb-2">
-      <div class="form-group">
-        <label for="title" class="sr-only">Adicionar Música</label>
-          <input type="text" required [(ngModel)]="songToAdd.title" name="title" class="form-control form-control-sm mb-2 mr-2" id="title" placeholder="Nome da Música">
-          <button type="submit" [disabled]="!songForm.form.valid" class="btn btn-sm btn-outline-dark mb-2">Adicionar</button>
-      </div>
-    </form>
+    <div *ngIf="auth.canEdit(auth.user$ | async)" class="input-group mb-3">
+        <form (ngSubmit)="addSong(songToAdd)" #songForm="ngForm" class="input-group">
+          <input type="text" required [(ngModel)]="songToAdd.title" name="title" class="form-control" placeholder="Nome da Música..." aria-label="Nome da Música" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+              <button class="btn btn-secondary" type="submit" [disabled]="!songForm.form.valid">Adicionar</button>
+          </div>
+        </form>
+    </div>
     
     <!-- SONGS LIST -->
     <ul class="list-group mb-5">
       <li *ngFor="let song of songs | async" (click)="selectSong(song)" class="list-group-item list-group-item-action" [class.active]="song === selectedSong">
           {{ song.title }}
           <div *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeSong(song)" class="float-right">
-              <i class="fa fa-trash-alt"></i>
+            <i class="fa fa-trash-alt"></i>
           </div>
       </li>
     </ul>

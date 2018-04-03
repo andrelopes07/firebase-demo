@@ -1,10 +1,11 @@
 .active {
-    background-color: #343A40;
-    border-color: #343A40;
+    background-color: #545B62;
+    border-color: #545B62;
 }
 
 .list-group-item {
     cursor: pointer;
+    border-radius: 0;
 }
 
 .fa-trash-alt {
@@ -23,23 +24,20 @@
 
 /* width */
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 3px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
     background: #a3a3a3c7;
-    border-radius: 5px;
 }
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: rgb(77, 77, 77);
-    border-radius: 5px;
 }

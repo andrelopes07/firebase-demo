@@ -9,7 +9,7 @@ import { AuthService } from './_Services/auth.service';
     <app-navbar [user]="user"></app-navbar>
   </div>
 
-  <div class="container" style="margin-top: 70px">
+  <div class="container-fluid" style="margin-top: 70px">
     <router-outlet></router-outlet>
   </div>
   

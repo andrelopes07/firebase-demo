@@ -28,14 +28,14 @@ export class SongsService {
     }
 
     addSong(song: Song) {
-        this.db.collection(`songs/`).add(song);
+        return this.db.collection(`songs/`).add(song);
     }
 
     removeSong(id: string) {
         return this.db.collection(`songs`).doc(id).delete()
-        .catch((error) => {
-            this.alertify.error(error)
-        });
+            .catch((error) => {
+                this.alertify.error(error)
+            });
     }
 
 }

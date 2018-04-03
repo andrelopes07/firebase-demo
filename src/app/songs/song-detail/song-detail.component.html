@@ -2,40 +2,78 @@
     <h3 class="mb-3">{{ song.title }}</h3>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-hover table-striped table-sm">
-        <thead>
-            <tr>
-            <th scope="col">Ficheiro</th>
-            <th scope="col">Data de Carregamento</th>
-            <th scope="col" class="text-center">Download</th>
-            <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col" class="text-center">Remover</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let upload of uploads | async">
-            <td class="align-middle">{{ upload.name }}</td>
-            <td class="align-middle">{{ upload.createdAt | date }}</td>
-            <td class="text-center actions">
-                <a class="mr-2" [href]="upload.url" download><i class="fa fa-download"></i></a>
-            </td>   
-            <td class="text-center">
-                <a *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeFile(upload)"><i class="fa fa-trash-alt"></i></a>
-            </td> 
-        </tr>
-        </tbody>
-    </table>
+<div class="btn-group mt-2" role="group" aria-label="Tab Selecionada">
+    <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">Ficheiros</button>
+    <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">Vídeos</button>
 </div>
 
-<div *ngIf="auth.canEdit(auth.user$ | async)">
-    <h5>Carregar Ficheiro</h5>
-
-    <div *ngIf="currentUpload">
+<!-- UPLOAD FORM -->
+<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'files'" class="float-right">
+    <span *ngIf="currentUpload">
         Progresso: <progress class="progress is-success" max=100 value="{{ currentUpload?.progress }}"></progress>
-    </div>
+    </span>
 
-    <form (ngSubmit)="uploadSingle()" #uploadForm="ngForm" class="form-inline">
-        <input [disabled]="currentUpload" type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3" class="form-control form-control-sm mb-2 mr-sm-2">
-        <button type="submit" [disabled]="!selectedFiles || currentUpload" class="btn btn-sm btn-outline-dark mb-2">Upload</button>
+    <form (ngSubmit)="uploadSingle()" #uploadForm="ngForm" class="input-group">
+        <input [disabled]="currentUpload" type="file" class="button" (change)="detectFiles($event)" accept=".pdf,.mp3" class="form-control" aria-label="Ficheiro a Carregar" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button type="submit" [disabled]="!selectedFiles || currentUpload" class="btn btn-secondary">Upload</button>
+        </div>
     </form>
+</span>
+
+<!-- ADD VIDEO FORM -->
+<span *ngIf="selectedTab == 'videos'" class="float-right">
+    <form *ngIf="auth.canEdit(auth.user$ | async)" (ngSubmit)="addVideo(videoToAdd)" #videoForm="ngForm" class="input-group mr-3">
+        <input type="text" required [(ngModel)]="videoToAdd.url" name="url" class="form-control" placeholder="ID do Vídeo (YouTube)..." aria-label="Url do Vídeo" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-secondary" type="submit" [disabled]="!videoForm.form.valid">Adicionar</button>
+        </div>
+    </form>
+</span>
+
+<!-- FILES TAB -->
+<div *ngIf="selectedTab === 'files'" class="files mt-3">
+    <!-- FILES TABLE -->
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-sm">
+            <thead>
+                <tr>
+                <th scope="col">Ficheiro</th>
+                <th scope="col">Tamanho</th>
+                <th scope="col">Data de Carregamento</th>
+                <th scope="col" class="text-center">Download</th>
+                <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col" class="text-center">Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let upload of uploads | async">
+                <td class="align-middle">{{ upload.name }}</td>
+                <td class="align-middle">{{ upload.size / 1024 / 1024 | number:'1.2-2' }} MB</td>
+                <td class="align-middle">{{ upload.createdAt | date }}</td>
+                <td class="text-center actions">
+                    <a class="mr-2" [href]="upload.url" download><i class="fa fa-download"></i></a>
+                </td>   
+                <td class="text-center">
+                    <a *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeFile(upload)"><i class="fa fa-trash-alt"></i></a>
+                </td> 
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- VIDEOS TAB -->
+<div *ngIf="selectedTab === 'videos'" class="videos mt-3">
+    <span *ngFor="let video of videos | async">
+        <iframe
+            width="320" 
+            height="200" 
+            [src]="video.url | safe"
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen class="mt-3"></iframe>
+            <span *ngIf="auth.canEdit(auth.user$ | async)">
+                <button class="btn btn-block btn-outline-secondary" (click)="removeVideo(video)"><i class="fa fa-trash-alt"></i></button>
+            </span>
+    </span>
 </div>

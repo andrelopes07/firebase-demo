@@ -3,6 +3,7 @@ export class Upload {
     file: File;
     name: string;
     url: string;
+    size: number;
     progress?: number;
     createdAt: number;
   
