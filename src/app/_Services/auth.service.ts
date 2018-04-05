@@ -50,7 +50,7 @@ export class AuthService {
             name: user.displayName,
             email: user.email,
             roles: {
-                standard: true
+                dummyProp: true
             },
             createdAt: user.metadata.a,
             lastLogin: user.metadata.b
@@ -58,19 +58,14 @@ export class AuthService {
         return userRef.set(data, { merge: true });
     }
 
-    canRead(user: User): boolean {
-        const allowed = ['standard', 'admin'];
-        return this.checkAuthorization(user, allowed);
+    isValid(user: User): boolean {
+        const allowedRoles = ['standard'];
+        return this.checkAuthorization(user, allowedRoles);
     }
 
-    canEdit(user: User): boolean {
-        const allowed = ['admin'];
-        return this.checkAuthorization(user, allowed);
-    }
-
-    canDelete(user: User): boolean {
-        const allowed = ['admin'];
-        return this.checkAuthorization(user, allowed);
+    isAdmin(user: User): boolean {
+        const allowedRoles = ['admin'];
+        return this.checkAuthorization(user, allowedRoles);
     }
 
     private checkAuthorization(user: User, allowedRoles: string[]): boolean {

@@ -12,7 +12,7 @@ import { AlertifyService } from '../_Services/alertify.service';
 })
 export class UsersComponent implements OnInit {
   users: User[];
-  user: User;
+  currentUser: User;
 
   constructor(
     public auth: AuthService,
@@ -21,25 +21,33 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userService.getUsers().forEach(data => {
+    this.userService.getUsers().subscribe(data => {
       this.users = data;
     });
     this.auth.user$.subscribe(data => {
-      this.user = data;
+      this.currentUser = data;
     });
   }
 
-  toggleAdmin(user) {
-    if(this.auth.canEdit(this.user)) {
-      this.userService.toggleAdminRole(user);
+  toggleInvalid(user) {
+    if(this.auth.isAdmin(this.currentUser)) {
+      this.userService.toggleInvalidRole(user);
     } else {
       this.alertify.error('Acesso negado!');
     }
   }
 
   toggleStandard(user) {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.currentUser)) {
       this.userService.toggleStandardRole(user);
+    } else {
+      this.alertify.error('Acesso negado!');
+    }
+  }
+
+  toggleAdmin(user) {
+    if(this.auth.isAdmin(this.currentUser)) {
+      this.userService.toggleAdminRole(user);
     } else {
       this.alertify.error('Acesso negado!');
     }

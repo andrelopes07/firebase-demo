@@ -20,7 +20,7 @@ export class UserService {
     return this.users$;
   }
 
-  toggleAdminRole(user) {
+  toggleInvalidRole(user) {
     const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
       const data : User = {
         uid : user.uid,
@@ -28,8 +28,8 @@ export class UserService {
         name: user.name,
         email: user.email,
         roles: {
-            admin: user.roles.admin ? false : true,
-            standard: true
+            standard: false,
+            admin: false
         },
         createdAt: user.createdAt,
         lastLogin: user.lastLogin
@@ -45,7 +45,25 @@ export class UserService {
         name: user.name,
         email: user.email,
         roles: {
-            standard: user.roles.standard ? false : true,
+            standard: true,
+            admin: false
+        },
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin
+      }
+      return userRef.set(data, { merge: true });
+  }
+
+  toggleAdminRole(user) {
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
+      const data : User = {
+        uid : user.uid,
+        photoURL: user.photoURL,
+        name: user.name,
+        email: user.email,
+        roles: {
+            standard: true,
+            admin: true
         },
         createdAt: user.createdAt,
         lastLogin: user.lastLogin

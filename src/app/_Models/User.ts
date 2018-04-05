@@ -1,4 +1,5 @@
 export interface Roles {
+    dummyProp?: boolean;
     standard?: boolean;
     admin?: boolean;
 }

@@ -13,7 +13,7 @@ import { Observable } from 'rxjs/Observable';
 })
 export class SongsComponent implements OnInit {
   user: User;
-  songs: Observable<Song[]>;
+  songs: Song[];
   songToAdd: Song = {
     title: ''
   };
@@ -26,13 +26,16 @@ export class SongsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.songs = this.songsService.getSongs();
+    this.songsService.getSongs().subscribe(data => {
+      this.songs = data;
+      this.selectedSong = this.songs[0];
+    });
     this.auth.user$.subscribe(data => {
       this.user = data;
   })}
 
   addSong(song: Song) {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.user)) {
       this.songsService.addSong(song);
       this.songToAdd.title = '';
     } else {
@@ -43,13 +46,13 @@ export class SongsComponent implements OnInit {
   removeSong(song: Song) {
       this.alertify.confirm(`Tem a certeza que deseja remover ${song.title}?`, () => {
       this.songsService.removeSong(song.id).then(() => {
-        this.selectedSong = null;
+        this.selectedSong = this.songs[0];
         this.alertify.success('Música removida com sucesso!');
       });
     });
   }
 
-  selectSong(song) {
+  selectSong(song: Song) {
     this.selectedSong = song;
   }
 

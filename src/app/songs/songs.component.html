@@ -1,9 +1,9 @@
-<div class="row">
+<div *ngIf="auth.isValid(user)" class="row">
 
   <!-- ADD SONG FORM -->
-  <div class="col-lg-3">
+  <div class="col-md-3">
 
-    <div *ngIf="auth.canEdit(auth.user$ | async)" class="input-group mb-3">
+    <div *ngIf="auth.isAdmin(user)" class="input-group mb-3">
         <form (ngSubmit)="addSong(songToAdd)" #songForm="ngForm" class="input-group">
           <input type="text" required [(ngModel)]="songToAdd.title" name="title" class="form-control" placeholder="Nome da Música..." aria-label="Nome da Música" aria-describedby="basic-addon2">
           <div class="input-group-append">
@@ -14,9 +14,9 @@
     
     <!-- SONGS LIST -->
     <ul class="list-group mb-5">
-      <li *ngFor="let song of songs | async" (click)="selectSong(song)" class="list-group-item list-group-item-action" [class.active]="song === selectedSong">
+      <li *ngFor="let song of songs" (click)="selectSong(song)" class="list-group-item list-group-item-action" [class.active]="song === selectedSong">
           {{ song.title }}
-          <div *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeSong(song)" class="float-right">
+          <div *ngIf="auth.isAdmin(user)" (click)="removeSong(song)" class="float-right">
             <i class="fa fa-trash-alt"></i>
           </div>
       </li>
@@ -25,19 +25,17 @@
   </div>
 
   <!-- SONG-DETAILS -->
-  <div *ngIf="selectedSong" class="col-lg-9">
+  <div *ngIf="selectedSong" class="col-md-9">
     <app-song-detail  [song]='selectedSong' [user]="user"></app-song-detail>
-  </div>
-
-  <div *ngIf="!selectedSong" class="col-lg-9">
-    <div class="jumbotron text-center">
-      <h1>Selecione uma Música</h1>
-    </div>  
   </div>
 
 </div>
 
-
+<div *ngIf="user?.roles.standard === false && user?.roles.admin === false">
+  <div class="jumbotron text-center">
+    <h1>A aguardar validação da conta por parte da direção...</h1>
+  </div>
+</div>
 
 
 

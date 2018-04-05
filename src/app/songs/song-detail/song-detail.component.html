@@ -2,54 +2,61 @@
     <h1 class="songTitle mb-3"><strong>{{ song.title }}</strong></h1>
 </div>
 
+<!-- FILES | VIDEOS BUTTONS -->
 <div class="btn-group mt-2" role="group" aria-label="Tab Selecionada">
     <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">
-        Ficheiros <span class="badge badge-light">{{ uploads.length }}</span>
+        Ficheiros <span class="badge badge-light">{{ uploads?.length }}</span>
     </button>
     <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">
-        Vídeos <span class="badge badge-light">{{ videos.length }}</span>
+        Vídeos <span class="badge badge-light">{{ videos?.length }}</span>
     </button>
 </div>
 
 <!-- UPLOAD FORM -->
-<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'files'" class="float-right mt-2">
-    <button type="button" class="btn btn-secondary" (click)="openModal(upload)">Carregar Ficheiro</button>
+<span *ngIf="auth.isAdmin(user) && selectedTab == 'files'" class="float-right mt-2">
+    <button type="button" class="btn btn-secondary" (click)="openModal(upload)">
+        <span class="d-none d-sm-block">Carregar Ficheiro</span>
+        <span class="d-block d-sm-none"><i class="fa fa-upload"></i></span>
+    </button>
 </span>
 
 <!-- ADD VIDEO FORM -->
-<span *ngIf="auth.canEdit(auth.user$ | async) && selectedTab == 'videos'" class="float-right mt-2">
-    <button type="button" class="btn btn-secondary" (click)="openModal(video)">Adicionar Vídeo</button>
+<span *ngIf="auth.isAdmin(user) && selectedTab == 'videos'" class="float-right mt-2">
+    <button type="button" class="btn btn-secondary" (click)="openModal(video)">
+        <span class="d-none d-sm-block">Adicionar Vídeo</span>
+        <span class="d-block d-sm-none"><i class="fa fa-plus"></i></span>
+    </button>
 </span>
 
 <!-- FILES TAB -->
 <div *ngIf="selectedTab === 'files'" class="files mt-3">
-    <div *ngIf="uploads.length == 0">
+    <div *ngIf="uploads?.length == 0">
         <div class="jumbotron text-center">
             <h2>Não existem ficheiros para esta música.</h2>
         </div>
     </div>
     <!-- FILES TABLE -->
-    <div *ngIf="uploads.length != 0" class="table-responsive">
+    <div *ngIf="uploads?.length != 0" class="table-responsive">
         <table class="table table-hover table-striped table-sm">
             <thead>
                 <tr>
                 <th scope="col">Ficheiro</th>
                 <th scope="col">Tamanho</th>
-                <th scope="col">Data de Carregamento</th>
+                <th scope="col" class="d-none d-sm-block">Data de Carregamento</th>
                 <th scope="col" class="text-center">Download</th>
-                <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col" class="text-center">Remover</th>
+                <th *ngIf="auth.isAdmin(user)" scope="col" class="text-center">Remover</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let upload of uploads">
                 <td class="align-middle">{{ upload.name }}</td>
                 <td class="align-middle">{{ upload.size | fileSize }}</td>
-                <td class="align-middle">{{ upload.createdAt | date }}</td>
+                <td class="align-middle d-none d-sm-block">{{ upload.createdAt | date }}</td>
                 <td class="text-center actions">
                     <a class="mr-2" [href]="upload.url" download><i class="fa fa-download"></i></a>
                 </td>   
                 <td class="text-center">
-                    <a *ngIf="auth.canEdit(auth.user$ | async)" (click)="removeFile(upload)"><i class="fa fa-trash-alt"></i></a>
+                    <a *ngIf="auth.isAdmin(user)" (click)="removeFile(upload)"><i class="fa fa-trash-alt"></i></a>
                 </td> 
             </tr>
             </tbody>
@@ -59,12 +66,12 @@
 
 <!-- VIDEOS TAB -->
 <div *ngIf="selectedTab === 'videos'" class="videos mt-3">
-    <div *ngIf="videos.length == 0">
+    <div *ngIf="videos?.length == 0">
         <div class="jumbotron text-center">
             <h2>Não existem vídeos para esta música.</h2>
         </div>
     </div>
-    <span *ngFor="let video of videos">
+    <span *ngFor="let video of videos" class="videoFrame">
         <iframe
             width="320" 
             height="200" 
@@ -72,8 +79,8 @@
             frameborder="0" 
             allow="autoplay; encrypted-media" 
             allowfullscreen class="mt-3"></iframe>
-            <span *ngIf="auth.canEdit(auth.user$ | async)">
-                <button class="btn btn-block btn-outline-secondary" (click)="removeVideo(video)"><i class="fa fa-trash-alt"></i></button>
+            <span *ngIf="auth.isAdmin(user)">
+                <button class="btn btn-block" (click)="removeVideo(video)"><i class="fa fa-trash-alt"></i></button>
             </span>
     </span>
 </div>

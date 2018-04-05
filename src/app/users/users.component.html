@@ -1,27 +1,37 @@
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Foto</th>
-      <th scope="col">Nome</th>
-      <th scope="col">Email</th>
-      <th scope="col">Ultimo Login</th>
-      <th scope="col">Membro Desde</th>
-      <th *ngIf="auth.canEdit(auth.user$ | async)" scope="col">Nivel de Acesso</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let user of users">
-      <th class="align-middle" scope="row"><img src="{{ user.photoURL }}" width="40" alt=""></th>
-      <td class="align-middle">{{ user.name }}</td>
-      <td class="align-middle">{{ user.email }}</td>
-      <td class="align-middle">{{ user.lastLogin | date }}</td>
-      <td class="align-middle">{{ user.createdAt | date }}</td>
-      <td *ngIf="auth.canEdit(auth.user$ | async)" class="align-middle">
-        <div>
-            <button (click)="toggleAdmin(user)" class="btn btn-sm">Administrador {{ user.roles.admin }}</button>
-            <button (click)="toggleStandard(user)" class="btn btn-sm">Standard {{ user.roles.standard }}</button>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="container">
+
+  <table class="table table-responsive table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Foto</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Email</th>
+        <th *ngIf="auth.isAdmin(currentUser)" scope="col">Nivel de Acesso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <th class="align-middle" scope="row"><img src="{{ user.photoURL }}" width="40" alt=""></th>
+        <td class="align-middle">{{ user.name }}</td>
+        <td class="align-middle">{{ user.email }}</td>
+        <td *ngIf="auth.isAdmin(currentUser)" class="align-middle">
+          <div>
+              <!-- ACCESS LEVEL BUTTONS -->
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn invalid" [class.btn-outline-secondary]="user.roles.standard || user.roles.admin" [class.active]="!user.roles.standard && !user.roles.admin" [class.btn-danger]="!user.roles.standard && !user.roles.admin">
+                  <input (click)="toggleInvalid(user)" type="radio" name="options" id="invalid" autocomplete="off"> Por Validar
+                </label>
+                <label class="btn btn-outline-secondary" [class.active]="user.roles.standard && !user.roles.admin">
+                  <input (click)="toggleStandard(user)" type="radio" name="options" id="valid" autocomplete="off"> Validado
+                </label>
+                <label class="btn btn-outline-secondary" [class.active]="user.roles.standard && user.roles.admin">
+                  <input (click)="toggleAdmin(user)" type="radio" name="options" id="admin" autocomplete="off"> Administrador
+                </label>
+              </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

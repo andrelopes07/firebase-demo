@@ -13,7 +13,7 @@ export class NavbarComponent {
   @Input() user: User;
   
   constructor(
-    private auth: AuthService,
+    public auth: AuthService,
     private router: Router,
     private alertify: AlertifyService
   ) { }

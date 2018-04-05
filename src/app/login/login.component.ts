@@ -19,7 +19,6 @@ export class LoginComponent {
   googleLogin() {
     this.afAuth.googleLogin().then(() => {
       this.router.navigate(['/songs']);
-      this.alertify.success('Login efetuado com sucesso!');
     }, error => {
       this.alertify.error('Login Invalido');
     });
@@ -28,7 +27,6 @@ export class LoginComponent {
   facebookLogin() {
     this.afAuth.facebookLogin().then(data => {
       this.router.navigate(['/songs']);
-      this.alertify.success('Login efetuado com sucesso!');
     }, error => {
       this.alertify.error('Login Invalido');
     });

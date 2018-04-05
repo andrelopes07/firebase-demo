@@ -1,24 +1,24 @@
-<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark justify-content-between">
 
   <a class="navbar-brand" [routerLink]="['/songs']">
-    <img src="../assets/logotipo_gatunos_atualizado-04.png" height="30" class="d-inline-block align-top" alt="Gatunos Logo">
+    <img src="../assets/logo.png"
+         height="30" 
+         class="d-inline-block align-top"
+         alt="Gatunos Logo" />
     Gatunos - Backoffice
   </a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-    <ul class="navbar-nav">
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" [routerLink]="['/songs']">Repertório <span class="sr-only">(current)</span></a>
-      </li>
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" [routerLink]="['/users']">Utilizadores <span class="sr-only">(current)</span></a>
+  <div class="btn-group" dropdown>
+    <button dropdownToggle type="button" class="btn btn-dark ">
+      <img [src]="user.photoURL" [alt]="user.name" class="userProfileImg">
+    </button>
+    <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+      <li *ngIf="auth.isAdmin(user)" role="menuitem"><a class="dropdown-item" [routerLink]="['/songs']">Repertório</a></li>
+      <li *ngIf="auth.isAdmin(user)" role="menuitem"><a class="dropdown-item" [routerLink]="['/users']">Utilizadores</a></li>
+      <li *ngIf="auth.isAdmin(user)" class="divider dropdown-divider"></li>
+      <li role="menuitem"><a class="dropdown-item" (click)="logout()">Sair</a>
       </li>
     </ul>
-    <button (click)="logout()" class="btn btn-dark">Logout</button>
   </div>
 
 </nav>

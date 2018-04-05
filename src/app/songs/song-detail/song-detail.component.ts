@@ -42,20 +42,20 @@ export class SongDetailComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    this.uploadService.getUploads(this.song.id).forEach(data => {
+    this.uploadService.getUploads(this.song.id).subscribe(data => {
       this.uploads = data;
     });
-    this.videoService.getVideos(this.song.id).forEach(data => {
+    this.videoService.getVideos(this.song.id).subscribe(data => {
       this.videos = data;
     });
     this.selectedTab = 'files';
   }
 
   ngOnChanges() {
-    this.uploadService.getUploads(this.song.id).forEach(data => {
+    this.uploadService.getUploads(this.song.id).subscribe(data => {
       this.uploads = data;
     });
-    this.videoService.getVideos(this.song.id).forEach(data => {
+    this.videoService.getVideos(this.song.id).subscribe(data => {
       this.videos = data;
     });
     this.selectedTab = 'files';
@@ -82,7 +82,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
   }
 
   uploadSingle() {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.user)) {
       let file = this.selectedFiles;
       if (file && file.length === 1) {
         this.currentUpload = new Upload(file.item(0));
@@ -96,7 +96,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
   }
 
   removeFile(upload: Upload) {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.user)) {
       this.alertify.confirm(`Tem a certeza que deseja remover ${upload.name}?`, () => {
         this.uploadService.deleteUpload(this.song, upload);
         this.alertify.success('Ficheiro removido com sucesso!');
@@ -107,7 +107,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
   }
 
   addVideo() {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.user)) {
       this.videoService.addVideo(this.videoToAdd, this.song.id);
       this.videoToAdd.url = '';
       this.alertify.success('Vídeo adicionado com sucesso!');
@@ -118,7 +118,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
   }
 
   removeVideo(video: Video) {
-    if(this.auth.canEdit(this.user)) {
+    if(this.auth.isAdmin(this.user)) {
       this.alertify.confirm(`Tem a certeza que deseja remover este vídeo?`, () => {
         this.videoService.deleteVideo(this.song.id, video.id);
         this.alertify.success('Vídeo removido com sucesso!');

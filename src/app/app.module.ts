@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireStorageModule } from 'angularfire2/storage';
@@ -67,7 +68,8 @@ export const appRoutes: Routes = [
     FormsModule,
     RouterModule.forRoot(appRoutes),
     ModalModule.forRoot(),
-    ProgressbarModule.forRoot()
+    ProgressbarModule.forRoot(),
+    BsDropdownModule.forRoot()
   ],
   providers: [
     AuthService,
