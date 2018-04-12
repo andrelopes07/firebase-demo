@@ -14,7 +14,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import { AppComponent } from './app.component';
 import { SongsComponent } from './songs/songs.component';
-import { SongDetailComponent } from './songs/song-detail/song-detail.component';
+import { SongDetailComponent } from './song-detail/song-detail.component';
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';

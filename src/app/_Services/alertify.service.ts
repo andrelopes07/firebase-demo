@@ -6,13 +6,13 @@ export class AlertifyService {
 
     constructor() { }
 
-    confirm(message: String, okCallback: () => any) {
+    confirm(title: string, message: string, okCallback: () => any) {
         alertify.confirm(message, function(e) {
             if (e) {
                 okCallback();
             } else {
             }
-        });
+        }).setHeader(title);
     }
 
     success(message: string) {

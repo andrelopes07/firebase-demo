@@ -25,7 +25,7 @@ a:hover {
 }
 
 .files, .videos {
-    height: 65vh;
+    height: 60vh;
     overflow-y: auto;
 }
 
@@ -33,6 +33,10 @@ a:hover {
     width: 320px;
 }
 
+.videoFrame {
+    display: inline-block;
+    padding-right: 5px;
+}
 
 /* width */
 ::-webkit-scrollbar {

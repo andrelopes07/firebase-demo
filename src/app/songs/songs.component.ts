@@ -44,7 +44,7 @@ export class SongsComponent implements OnInit {
   }
 
   removeSong(song: Song) {
-      this.alertify.confirm(`Tem a certeza que deseja remover ${song.title}?`, () => {
+      this.alertify.confirm('Remover Música', `Tem a certeza que deseja remover ${song.title}?`, () => {
       this.songsService.removeSong(song.id).then(() => {
         this.selectedSong = this.songs[0];
         this.alertify.success('Música removida com sucesso!');

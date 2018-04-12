@@ -1,32 +1,32 @@
-<div>
+<div class="header">
     <h1 class="songTitle mb-3"><strong>{{ song.title }}</strong></h1>
+
+    <!-- FILES | VIDEOS BUTTONS -->
+    <div class="btn-group mt-2" role="group" aria-label="Tab Selecionada">
+        <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">
+            Ficheiros <span class="badge badge-light">{{ uploads?.length }}</span>
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">
+            Vídeos <span class="badge badge-light">{{ videos?.length }}</span>
+        </button>
+    </div>
+
+    <!-- UPLOAD FORM -->
+    <span *ngIf="auth.isAdmin(user) && selectedTab == 'files'" class="float-right mt-2">
+        <button type="button" class="btn btn-secondary" (click)="openModal(upload)">
+            <span class="d-none d-sm-block">Carregar Ficheiro</span>
+            <span class="d-block d-sm-none"><i class="fa fa-upload"></i></span>
+        </button>
+    </span>
+
+    <!-- ADD VIDEO FORM -->
+    <span *ngIf="auth.isAdmin(user) && selectedTab == 'videos'" class="float-right mt-2">
+        <button type="button" class="btn btn-secondary" (click)="openModal(video)">
+            <span class="d-none d-sm-block">Adicionar Vídeo</span>
+            <span class="d-block d-sm-none"><i class="fa fa-plus"></i></span>
+        </button>
+    </span>
 </div>
-
-<!-- FILES | VIDEOS BUTTONS -->
-<div class="btn-group mt-2" role="group" aria-label="Tab Selecionada">
-    <button type="button" class="btn btn-secondary" (click)="selectTab('files')" [class.active]="selectedTab == 'files'">
-        Ficheiros <span class="badge badge-light">{{ uploads?.length }}</span>
-    </button>
-    <button type="button" class="btn btn-secondary" (click)="selectTab('videos')" [class.active]="selectedTab == 'videos'">
-        Vídeos <span class="badge badge-light">{{ videos?.length }}</span>
-    </button>
-</div>
-
-<!-- UPLOAD FORM -->
-<span *ngIf="auth.isAdmin(user) && selectedTab == 'files'" class="float-right mt-2">
-    <button type="button" class="btn btn-secondary" (click)="openModal(upload)">
-        <span class="d-none d-sm-block">Carregar Ficheiro</span>
-        <span class="d-block d-sm-none"><i class="fa fa-upload"></i></span>
-    </button>
-</span>
-
-<!-- ADD VIDEO FORM -->
-<span *ngIf="auth.isAdmin(user) && selectedTab == 'videos'" class="float-right mt-2">
-    <button type="button" class="btn btn-secondary" (click)="openModal(video)">
-        <span class="d-none d-sm-block">Adicionar Vídeo</span>
-        <span class="d-block d-sm-none"><i class="fa fa-plus"></i></span>
-    </button>
-</span>
 
 <!-- FILES TAB -->
 <div *ngIf="selectedTab === 'files'" class="files mt-3">

@@ -21,7 +21,6 @@ export class NavbarComponent {
   logout() {
     this.auth.signOut();
     this.router.navigate(['/login']);
-    this.alertify.message('Logout efetuado com sucesso');
   }
 
 }

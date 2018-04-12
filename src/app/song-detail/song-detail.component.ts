@@ -1,17 +1,17 @@
 import { Component, Input, OnInit, OnChanges, TemplateRef} from '@angular/core';
-import { SongsService } from '../../_Services/songs.service';
-import { UploadService } from '../../_Services/upload.service';
-import { AlertifyService } from '../../_Services/alertify.service';
-import { AuthService } from '../../_Services/auth.service';
-import { Song } from '../../_Models/Song';
-import { User } from '../../_Models/User';
-import { Upload } from '../../_Models/Upload';
+import { SongsService } from '../_Services/songs.service';
+import { UploadService } from '../_Services/upload.service';
+import { AlertifyService } from '../_Services/alertify.service';
+import { AuthService } from '../_Services/auth.service';
+import { Song } from '../_Models/Song';
+import { User } from '../_Models/User';
+import { Upload } from '../_Models/Upload';
 import { Observable } from 'rxjs/Observable';
 import { DecimalPipe } from '@angular/common';
-import { VideoService } from '../../_Services/video.service';
-import { Video } from '../../_Models/Video';
-import { SafePipe } from '../../_Pipes/safe.pipe';
-import { FileSizePipe } from '../../_Pipes/fileSize.pipe';
+import { VideoService } from '../_Services/video.service';
+import { Video } from '../_Models/Video';
+import { SafePipe } from '../_Pipes/safe.pipe';
+import { FileSizePipe } from '../_Pipes/fileSize.pipe';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
@@ -52,6 +52,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
+    this.uploads = null;
     this.uploadService.getUploads(this.song.id).subscribe(data => {
       this.uploads = data;
     });
@@ -97,7 +98,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
 
   removeFile(upload: Upload) {
     if(this.auth.isAdmin(this.user)) {
-      this.alertify.confirm(`Tem a certeza que deseja remover ${upload.name}?`, () => {
+      this.alertify.confirm('Remover Ficheiro', `Tem a certeza que deseja remover ${upload.name}?`, () => {
         this.uploadService.deleteUpload(this.song, upload);
         this.alertify.success('Ficheiro removido com sucesso!');
       });
@@ -119,7 +120,7 @@ export class SongDetailComponent implements OnInit, OnChanges {
 
   removeVideo(video: Video) {
     if(this.auth.isAdmin(this.user)) {
-      this.alertify.confirm(`Tem a certeza que deseja remover este vídeo?`, () => {
+      this.alertify.confirm('Remover Vídeo', `Tem a certeza que deseja remover este vídeo?`, () => {
         this.videoService.deleteVideo(this.song.id, video.id);
         this.alertify.success('Vídeo removido com sucesso!');
       });
